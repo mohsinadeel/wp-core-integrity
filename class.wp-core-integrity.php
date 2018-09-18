@@ -63,7 +63,7 @@ class WP_Core_Integrity {
 			'manage_options',
 			'wp-core-integrity',
 			[ $this, 'set_plugin_options' ],
-			plugins_url( 'wp-core-integrity/images/icon.png' ) );
+			plugins_url( 'images/icon.png', __FILE__ ) );
 		$page = add_submenu_page( 'wp-core-integrity',
 			'Scan WP Core Integrity',
 			'Scan WP Core',
