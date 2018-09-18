@@ -144,14 +144,14 @@ class WP_Core_Integrity {
 	 */
 	function check_files_changes_in_core_files() {
 		global $wp_version, $wp_local_package, $wp_locale;
-		$wp_locale   = isset( $wp_local_package ) ? $wp_local_package : 'en_US';
-		$apiurl      = 'https://api.wordpress.org/core/checksums/1.0/?version=' . $wp_version . '&locale=' . $wp_locale;
-		$json        = json_decode( file_get_contents( $apiurl ), true );
-		$core_files  = preg_grep( '/^wp-content.+/', $json, PREG_GREP_INVERT );
-		$checksums   = $core_files['checksums'];
+		$wp_locale = isset( $wp_local_package ) ? $wp_local_package : 'en_US';
+		$apiurl    = 'https://api.wordpress.org/core/checksums/1.0/?version=' . $wp_version . '&locale=' . $wp_locale;
+		$json      = json_decode( file_get_contents( $apiurl ), true );
+		$checksums = array_intersect_key( $json['checksums'],
+			array_flip( preg_grep( '/^wp-content.+/', array_keys( $json['checksums'] ), PREG_GREP_INVERT ) ) );
+
 		$hasNoErrors = true;
 		$errors      = array();
-
 		if ( ! $checksums ) {
 			$this->setNotice( 'Unable to connect to WordPress for official checksum. Please check your internet connectivity.',
 				'warning' );
