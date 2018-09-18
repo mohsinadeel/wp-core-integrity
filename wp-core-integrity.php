@@ -1,7 +1,8 @@
 <?php
-defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
-/**
+defined('ABSPATH') or die('No script kiddies please!');
+
+/*
  * @package: WP_Core_Integrity
  * @author: Mohsin Adeel <mohsin.adeel@yahoo.com>
  * @license: GPL3
@@ -16,14 +17,14 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
  * License: GPL3
  * Text Domain: wp-core-integrity
  */
-define( 'WP_CORE_INTEGRITY_VERSION', '1.0.2' );
-define( 'WP_CORE_INTEGRITY_MINIMUM_WP_VERSION', '4.0' );
-define( 'WP_CORE_INTEGRITY_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define('WP_CORE_INTEGRITY_VERSION', '1.0.2');
+define('WP_CORE_INTEGRITY_MINIMUM_WP_VERSION', '4.0');
+define('WP_CORE_INTEGRITY_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
-register_activation_hook( __FILE__, array( 'Inceptionsol\WP_Core_Integrity', 'plugin_activation' ) );
+register_activation_hook(__FILE__, ['Inceptionsol\WP_Core_Integrity', 'plugin_activation']);
 
-require_once( WP_CORE_INTEGRITY_PLUGIN_DIR . 'class.wp-core-integrity.php' );
+require_once WP_CORE_INTEGRITY_PLUGIN_DIR.'class.wp-core-integrity.php';
 
 $wp_core_integrity = new \Inceptionsol\WP_Core_Integrity();
 
-add_action( 'init', array( $wp_core_integrity, 'init' ) );
+add_action('init', [$wp_core_integrity, 'init']);
