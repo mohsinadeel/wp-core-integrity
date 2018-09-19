@@ -1,0 +1,12 @@
+preset: psr2
+
+enabled:
+  - no_useless_else
+
+finder:
+  exclude:
+    - tests
+    - node_modules
+    - vendor
+  name:
+    - "*.php"
