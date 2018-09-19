@@ -1,15 +1,16 @@
-#wp-core-integrity {
-    margin: 20px 10px;
+#wp-core-integrity
+{
+  margin: 20px 10px;
 }
-
-#wp-core-integrity .integrity-results {
-    padding: 30px;
+#wp-core-integrity .integrity-results
+{
+  padding: 30px;
 }
-
-#wp-core-integrity p {
-    line-height: 24px;
+#wp-core-integrity p
+{
+  line-height: 24px;
 }
-
-#wp-core-integrity .padding-left {
-    padding-left: 10px;
+#wp-core-integrity .padding-left
+{
+  padding-left: 10px;
 }

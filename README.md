@@ -1,15 +1,17 @@
 # WordPress Core Integrity Checker
+
+[![StyleCI](https://styleci.io/repos/149294008/shield)](https://styleci.io/repos/149294008)
+
 A plugin to scan WordPress core directories to check the files integrity
 
 # Details
- * Version: 1.0.2
  * Author: Mohsin Adeel
  * Author URI: http://www.inceptionsol.com/mohsin
  * License: GPL3
  
  # Contributing
  * Please report any issue you find in the issues page. Pull requests are more than welcome.
- * Use this guide for PHP coding standards - https://make.wordpress.org/core/handbook/best-practices/coding-standards/php/
+ * Use this guide for PHP coding standards - PSR2
  
  # Opening an Issue
  Before opening an issue there are a couple of considerations:

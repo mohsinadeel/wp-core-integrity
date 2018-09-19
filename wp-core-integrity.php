@@ -21,9 +21,10 @@ define('WP_CORE_INTEGRITY_VERSION', '1.0.2');
 define('WP_CORE_INTEGRITY_MINIMUM_WP_VERSION', '4.0');
 define('WP_CORE_INTEGRITY_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
-register_activation_hook(__FILE__, ['Inceptionsol\WP_Core_Integrity', 'plugin_activation']);
+register_activation_hook(__FILE__,
+    ['Inceptionsol\WP_Core_Integrity', 'plugin_activation']);
 
-require_once WP_CORE_INTEGRITY_PLUGIN_DIR.'class.wp-core-integrity.php';
+require_once WP_CORE_INTEGRITY_PLUGIN_DIR . 'class.wp-core-integrity.php';
 
 $wp_core_integrity = new \Inceptionsol\WP_Core_Integrity();
 
