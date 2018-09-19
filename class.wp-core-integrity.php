@@ -41,7 +41,7 @@ class WP_Core_Integrity
     public function init()
     {
 
-        if ( ! $this->initiated) {
+        if (! $this->initiated) {
             $this->init_hooks();
         }
     }
@@ -82,7 +82,7 @@ class WP_Core_Integrity
     public function set_plugin_options()
     {
 
-        if ( ! current_user_can('manage_options')) {
+        if (! current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
         echo '<div id="wp-core-integrity">';
@@ -93,7 +93,7 @@ class WP_Core_Integrity
     public function check_wp_integrity()
     {
 
-        if ( ! current_user_can('manage_options')) {
+        if (! current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
         echo '<div id="wp-core-integrity">';
@@ -178,7 +178,7 @@ class WP_Core_Integrity
 
         $hasNoErrors = true;
         $errors      = [];
-        if ( ! $checksums) {
+        if (! $checksums) {
             $this->setNotice('Unable to connect to WordPress for official checksum. Please check your internet connectivity.',
                 'warning');
 
@@ -202,17 +202,15 @@ class WP_Core_Integrity
             $this->setNotice('<strong>Congratulations!</strong>,WordPress integrity test passed.');
 
             return count($checksums);
-        } else {
-            if ($errors) {
-                foreach ($errors as $error) {
-                    $this->setNotice($error, 'warning');
-                }
-            } else {
-                $this->setNotice('<strong>Warning!</strong> Your WordPress integrity is compromised.',
-                    'warning');
+        } elseif (count($errors) > 0) {
+            foreach ($errors as $error) {
+                $this->setNotice($error, 'warning');
             }
-
-            return count($checksums);
+        } else {
+            $this->setNotice('<strong>Warning!</strong> Your WordPress integrity is compromised.',
+                'warning');
         }
+
+        return count($checksums);
     }
 }

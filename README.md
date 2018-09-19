@@ -24,3 +24,8 @@ A plugin to scan WordPress core directories to check the files integrity
  *  Please be considerate that this is an open source project that I provide to the community for FREE when opening an issue.
  *  Feel free to contact me at the email provided in Author URI
  
+ # TODO
+ *  Feature: Cron Job Scheduling for checking and notifying admin about the vulnerability
+ *  Options to add/include wp-content to scan
+ *  Beautiful GUI
+ 
