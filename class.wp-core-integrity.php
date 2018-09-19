@@ -29,7 +29,6 @@ class WP_Core_Integrity
 
     public function __construct()
     {
-
         $this->initiated = false;
         $this->class     = 'success';
         $this->message   = '';
@@ -40,7 +39,6 @@ class WP_Core_Integrity
      */
     public function init()
     {
-
         if (! $this->initiated) {
             $this->init_hooks();
         }
@@ -51,14 +49,12 @@ class WP_Core_Integrity
      */
     private function init_hooks()
     {
-
         $this->initiated = true;
         add_action('admin_menu', [$this, 'register_plugin_menu']);
     }
 
     public function plugin_admin_styles()
     {
-
         $handle = 'wpCoreIntegrityStyle';
         $src    = plugins_url('css/style.css', __FILE__);
         wp_register_style($handle, $src);
@@ -67,7 +63,6 @@ class WP_Core_Integrity
 
     public function register_plugin_menu()
     {
-
         add_menu_page('Check WP Core Integrity', 'WP Core Integrity',
             'manage_options', 'wp-core-integrity',
             [$this, 'set_plugin_options'],
@@ -81,7 +76,6 @@ class WP_Core_Integrity
 
     public function set_plugin_options()
     {
-
         if (! current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
@@ -92,7 +86,6 @@ class WP_Core_Integrity
 
     public function check_wp_integrity()
     {
-
         if (! current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
@@ -119,7 +112,6 @@ class WP_Core_Integrity
      */
     public function plugin_activation()
     {
-
         global $wp_version;
         if (version_compare($wp_version, WP_CORE_INTEGRITY_MINIMUM_WP_VERSION,
             '<')
@@ -129,7 +121,6 @@ class WP_Core_Integrity
                        . ' or above required';
             $class   = 'error';
             add_action('admin_notices', function () use ($class, $message) {
-
                 printf('<div class="notice is-dismissible notice-%1$s"><p>%2$s</p></div>',
                     esc_attr($class),
                     esc_html(__($message, 'wp-core-integrity')));
@@ -139,7 +130,6 @@ class WP_Core_Integrity
 
     public function setNotice($message, $class = 'success')
     {
-
         $this->message = $message;
         $this->class   = $class;
         $this->print_admin_notice_message();
@@ -151,7 +141,6 @@ class WP_Core_Integrity
      */
     public function print_admin_notice_message()
     {
-
         printf('<div class="notice is-dismissible notice-%1$s"><p>%2$s</p></div>',
             esc_attr($this->class), __($this->message, 'wp-core-integrity'));
     }
@@ -166,7 +155,6 @@ class WP_Core_Integrity
      */
     public function check_files_changes_in_core_files()
     {
-
         global $wp_version, $wp_local_package, $wp_locale;
         $wp_locale = isset($wp_local_package) ? $wp_local_package : 'en_US';
         $apiurl    = 'https://api.wordpress.org/core/checksums/1.0/?version='
