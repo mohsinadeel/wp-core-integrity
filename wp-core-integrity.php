@@ -2,7 +2,7 @@
 
 defined('ABSPATH') or die('No script kiddies please!');
 
-/*
+/**
  * @package: WP_Core_Integrity
  * @author: Mohsin Adeel <mohsin.adeel@yahoo.com>
  * @license: GPL3
@@ -11,13 +11,13 @@ defined('ABSPATH') or die('No script kiddies please!');
  * Plugin Name: WordPress Core Integrity Checker
  * Plugin Url: https://github.com/mohsinadeel/wp-core-integrity
  * Description: A plugin to scan WordPress core directories to check the files integrity
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: Mohsin Adeel
  * Author URI: http://www.inceptionsol.com/mohsin
  * License: GPL3
  * Text Domain: wp-core-integrity
  */
-define('WP_CORE_INTEGRITY_VERSION', '1.0.5');
+define('WP_CORE_INTEGRITY_VERSION', '1.0.6');
 define('WP_CORE_INTEGRITY_MINIMUM_WP_VERSION', '4.0');
 define('WP_CORE_INTEGRITY_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
