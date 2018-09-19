@@ -3,10 +3,10 @@ preset: psr2
 enabled:
   - no_useless_else
 
-linting: true
-
 finder:
   exclude:
-    - "tests"
+    - tests
+    - node_modules
+    - vendor
   name:
     - "*.php"
