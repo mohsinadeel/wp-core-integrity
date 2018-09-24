@@ -1,6 +1,6 @@
 <?php
 
-namespace mohsinadeel\wpcoreintegrity\core;
+namespace Inceptionsol\Coreintegrity\core;
 
 /**
  * Class WP_Core_Integrity.

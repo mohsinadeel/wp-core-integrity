@@ -2,7 +2,7 @@
 
 namespace tests;
 
-use \mohsinadeel\wpcoreintegrity\core\WP_Core_Integrity;
+use Inceptionsol\Coreintegrity\core\WP_Core_Integrity;
 use PHPUnit\Framework\TestCase;
 
 class BasicTest extends TestCase

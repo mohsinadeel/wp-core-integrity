@@ -18,14 +18,14 @@
 
 defined('ABSPATH') or die('No script kiddies please!');
 
-use mohsinadeel\wpcoreintegrity\core\WP_Core_Integrity;
+use Inceptionsol\Coreintegrity\core\WP_Core_Integrity;
 
 define('WP_CORE_INTEGRITY_VERSION', '1.0.6');
 define('WP_CORE_INTEGRITY_MINIMUM_WP_VERSION', '4.0');
 define('WP_CORE_INTEGRITY_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_CORE_INTEGRITY_SOURCE_DIR', WP_CORE_INTEGRITY_PLUGIN_DIR . 'src' . DIRECTORY_SEPARATOR);
 
-register_activation_hook(__FILE__, ['mohsinadeel\wpcoreintegrity\core\WP_Core_Integrity', 'plugin_activation']);
+register_activation_hook(__FILE__, ['Inceptionsol\Coreintegrity\core\WP_Core_Integrity', 'plugin_activation']);
 
 require_once WP_CORE_INTEGRITY_SOURCE_DIR . 'core' . DIRECTORY_SEPARATOR . 'class.wp-core-integrity.php';
 
