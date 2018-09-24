@@ -2,8 +2,6 @@
 
 namespace tests;
 
-require "../vendor/autoload.php";
-
 use mohsinadeel\wpcoreintegrity\core\WP_Core_Integrity;
 use PHPUnit\Framework\TestCase;
 
