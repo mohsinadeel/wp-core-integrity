@@ -25,12 +25,8 @@ cache:
 # Build these combinations of PHP and WordPress Versions
 matrix:
   include:
-    - php: 7.2
-      env: WP_VERSION=latest
     - php: 7.1
       env: WP_VERSION=latest
-    - php: 7.2
-      env: WP_VERSION=trunk
 
 # Setup environment
 before_script:
@@ -41,5 +37,5 @@ before_script:
 
 # Run tests
 script:
-  # Run just unit tests
-  - composer unit-tests
+  # Run PhpUnit
+  - phpunit --bootstrap vendor/autoload.php tests
