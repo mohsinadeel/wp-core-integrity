@@ -19,12 +19,12 @@
     "bin-dir": "vendor/bin"
   },
   "autoload": {
-    "psr-0": {
+    "psr-4": {
       "mohsinadeel\\wpcoreintegrity\\": "src/"
     }
   },
   "autoload-dev": {
-    "psr-0": {
+    "psr-4": {
       "tests\\": "tests/"
     }
   }
