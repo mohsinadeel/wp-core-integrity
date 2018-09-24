@@ -39,4 +39,5 @@ before_script:
 script:
   - composer validate --strict --no-check-lock
   # Run PhpUnit
-  - vendor/bin/phpunit --bootstrap vendor/autoload.php tests
+  #- vendor/bin/phpunit --bootstrap vendor/autoload.php tests
+  - vendor/bin/phpunit
