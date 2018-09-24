@@ -272,7 +272,6 @@ class WP_Core_Integrity
                             $this->setNotice('<strong>Error!</strong> New file added: ' . $file, 'error');
                         }
                     }
-
                 }
             }
         }
