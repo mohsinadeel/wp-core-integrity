@@ -38,4 +38,4 @@ before_script:
 # Run tests
 script:
   # Run PhpUnit
-  - phpunit --bootstrap vendor/autoload.php tests
+  - vendor/bin/phpunit --bootstrap vendor/autoload.php tests
