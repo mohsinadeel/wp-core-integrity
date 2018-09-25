@@ -23,4 +23,3 @@ define('WCI_VERSION', '1.0.7');
 define('WCI_MINIMUM_WP_VERSION', '4.0');
 
 require_once 'init.php';
-
