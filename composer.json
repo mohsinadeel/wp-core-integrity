@@ -1,0 +1,31 @@
+{
+  "name": "mohsinadeel/wp-core-integrity",
+  "description": "A plugin to scan WordPress core directories to check the files integrity",
+  "type": "project",
+  "require": {
+    "php": "^7.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.5"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mohsin Adeel",
+      "email": "mohsin.adeel@yahoo.com"
+    }
+  ],
+  "config": {
+    "bin-dir": "vendor/bin"
+  },
+  "autoload": {
+    "psr-4": {
+      "Inceptionsol\\Coreintegrity\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "tests\\": "tests/"
+    }
+  }
+}
