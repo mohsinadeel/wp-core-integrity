@@ -46,39 +46,51 @@ class WP_Core_Integrity
         }
     }
 
+    public function get_initiated()
+    {
+        return $this->initiated;
+    }
+
     /**
      * A place for Initializing WordPress hooks.
      */
     private function init_hooks()
     {
         $this->initiated = true;
+        add_action('admin_init', [$this, 'register_plugin_settings']);
         add_action('admin_menu', [$this, 'register_plugin_menu']);
     }
 
-    public function get_initiated()
+    public function register_plugin_settings()
     {
-        return $this->initiated;
-    }
-
-    public function plugin_admin_styles()
-    {
-        $handle = 'wpCoreIntegrityStyle';
-        $src    = plugins_url('css/style.css', __FILE__);
-        wp_register_style($handle, $src);
-        wp_enqueue_style($handle, $src, [], false, false);
+        register_setting('wp_core_integrity_core_group', 'include_wp_content',
+            ['default' => 0]);
+        register_setting('wp_core_integrity_core_group', 'check_newly_added_files',
+            ['default' => 1]);
     }
 
     public function register_plugin_menu()
     {
         add_menu_page('Check WP Core Integrity', 'WP Core Integrity',
-            'manage_options', 'wp-core-integrity',
+            'manage_options', 'wp_core_integrity',
             [$this, 'set_plugin_options'],
             'dashicons-lock');
-        $page = add_submenu_page('wp-core-integrity', 'Scan WP Core Integrity',
-            'Scan WP Core', 'manage_options', 'wp-core-integrity-check',
+        add_submenu_page('wp_core_integrity', 'WP Core Integrity Settings',
+            'Settings', 'manage_options', 'wp_core_integrity',
+            [$this, 'set_plugin_options']);
+        add_submenu_page('wp_core_integrity', 'Scan WP Core Integrity',
+            'Scan WP Core', 'manage_options', 'wp_core_integrity_check',
             [$this, 'check_wp_integrity']);
 
         add_action('admin_enqueue_scripts', [$this, 'plugin_admin_styles']);
+    }
+
+    public function plugin_admin_styles()
+    {
+        $handle = 'wpCoreIntegrityStyle';
+        $src    = plugins_url('css/style.css', WCI_BASE_FILE);
+        wp_register_style($handle, $src);
+        wp_enqueue_style($handle, $src, [], false, false);
     }
 
     public function set_plugin_options()
@@ -86,9 +98,7 @@ class WP_Core_Integrity
         if (! current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
-        echo '<div id="wp-core-integrity">';
-        echo '<p>Here is where the form would go if I actually had options.</p>';
-        echo '</div>';
+        require WCI_VIEW_PATH . 'settings.php';
     }
 
     public function check_wp_integrity()
@@ -96,46 +106,55 @@ class WP_Core_Integrity
         if (! current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
-        $this->checksum = $this->getChecksums();
-        if (! $this->checksum) {
-            $this->setNotice('Unable to connect to WordPress for official checksum. Please check your internet connectivity.',
-                'warning');
 
-            return false;
-        }
-        $hasNoError                    = false;
-        $check_newly_added_files       = true;
-        $count_check_new_files_in_core = null;
 
-        echo '<div id="wp-core-integrity">';
-        echo '<h3 class="padding-left">Checking WordPress Core Integrity</h3>';
+        echo '<div class="wrap" id="wp-core-integrity">';
+        echo '<h3>WordPress Core Integrity: Scan </h3>';
 
-        $start_time = time();
-        list($count_check_files_changes_in_core_files, $hasNoError) = $this->check_files_changes_in_core_files($this->checksum);
+        $start_scan = filter_input(INPUT_GET, 'start', FILTER_SANITIZE_NUMBER_INT);
+        if (isset($start_scan) && $start_scan == 1) {
+            $this->checksum = $this->getChecksums();
+            if (! $this->checksum) {
+                $this->setNotice('Unable to connect to WordPress for official checksum. Please check your internet connectivity.',
+                    'warning');
 
-        if ($hasNoError) {
-            if ($check_newly_added_files) {
-                list($count_check_new_files_in_core, $hasNoError) = $this->check_new_files_in_core($this->checksum);
+                return false;
             }
+            $hasNoError                       = false;
+            $check_newly_added_files_settings = get_option('check_newly_added_files', 1);
+            $count_check_new_files_in_core    = null;
+
+            $start_time = time();
+            list($count_check_files_changes_in_core_files, $hasNoError) = $this->check_files_changes_in_core_files($this->checksum);
 
             if ($hasNoError) {
-                $this->setNotice('<strong>Congratulations!</strong>,WordPress integrity test passed.');
+                if ($check_newly_added_files_settings) {
+                    list($count_check_new_files_in_core, $hasNoError) = $this->check_new_files_in_core($this->checksum);
+                }
+
+                if ($hasNoError) {
+                    $this->setNotice('<strong>Congratulations!</strong>,WordPress integrity test passed.');
+                }
             }
+
+            $end_time = time();
+
+            echo '<div class="integrity-results">';
+            echo '<h3>Scan Details:</h3>';
+
+            echo '<p><strong>Total files scanned: </strong>' . $count_check_files_changes_in_core_files . '<p>';
+
+            echo '<p><strong>Total new malicious files found: </strong>' . ($count_check_new_files_in_core ?: 0) . '<p>';
+
+
+            echo '<p><strong>Total time taken: </strong>' . ($end_time - $start_time) . ' seconds<p>';
+            echo '<h3>Selected Scan Options:</h3>';
+            echo '<p>Include "wp_include" to scan: <strong>' . (get_option('include_wp_content') ? "Yes" : "No") . '</strong></p>';
+            echo '<p>Search for malicious files addition in the core: <strong>' . (get_option('check_newly_added_files') ? "Yes" : "No") . '</strong></p>';
+            echo '</div>';
+        } else {
+            echo '<a class="page-title-action" href="javascript:void(0);" onclick="window.location = window.location+\'&start=1\'">Start Scan</a>';
         }
-
-        $end_time = time();
-
-        echo '<div class="integrity-results">';
-        echo '<h3>Scan Details:</h3>';
-
-        echo '<p><strong>Total Files Checked: </strong>' . $count_check_files_changes_in_core_files . '<p>';
-
-        if ($count_check_new_files_in_core) {
-            echo '<p><strong>Total New Files Added: </strong>' . $count_check_new_files_in_core . '<p>';
-        }
-
-        echo '<p><strong>Total Time Taken: </strong>' . ($end_time - $start_time) . ' seconds<p>';
-        echo '</div>';
         echo '</div>';
     }
 
@@ -207,17 +226,17 @@ class WP_Core_Integrity
     {
         global $wp_version, $wp_local_package, $wp_locale;
 
-        $wp_locale          = isset($wp_local_package) ? $wp_local_package : 'en_US';
-        $api_url            = 'https://api.wordpress.org/core/checksums/1.0/?version=' . $wp_version . '&locale=' . $wp_locale;
-        $json               = json_decode(file_get_contents($api_url), true);
-        $checksum           = $json['checksums'];
-        $exclude_wp_content = true;
+        $wp_locale                  = isset($wp_local_package) ? $wp_local_package : 'en_US';
+        $api_url                    = 'https://api.wordpress.org/core/checksums/1.0/?version=' . $wp_version . '&locale=' . $wp_locale;
+        $json                       = json_decode(file_get_contents($api_url), true);
+        $checksum                   = $json['checksums'];
+        $include_wp_content_setting = get_option('include_wp_content', 0);
 
         if (empty($checksum)) {
             return [];
         }
 
-        if ($exclude_wp_content) {
+        if (! $include_wp_content_setting) {
             $checksum = array_intersect_key($checksum,
                 array_flip(preg_grep('/^wp-content.+/',
                     array_keys($checksum), PREG_GREP_INVERT)));
