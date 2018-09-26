@@ -11,6 +11,7 @@ require_once WCI_SOURCE_PATH . 'core' . DIRECTORY_SEPARATOR . 'class.wp-core-int
 
 
 register_activation_hook(__FILE__, ['Inceptionsol\Coreintegrity\core\WP_Core_Integrity', 'plugin_activation']);
+register_deactivation_hook(__FILE__, ['Inceptionsol\Coreintegrity\core\WP_Core_Integrity', 'plugin_deactivation']);
 
 
 $wp_core_integrity = new WP_Core_Integrity();

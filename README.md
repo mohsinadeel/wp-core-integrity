@@ -1,6 +1,7 @@
 # WordPress Core Integrity Checker
 
 [![StyleCI](https://styleci.io/repos/149294008/shield)](https://styleci.io/repos/149294008)
+[![Build Status](https://travis-ci.com/mohsinadeel/wp-core-integrity.svg?branch=master)](https://travis-ci.com/mohsinadeel/wp-core-integrity)
 
 A plugin to scan WordPress core directories to check the files integrity
 
@@ -24,6 +25,4 @@ A plugin to scan WordPress core directories to check the files integrity
  *  Please be considerate that this is an open source project that I provide to the community for FREE when opening an issue.
  *  Feel free to contact me at the email provided in Author URI
  
- # TODO
- *  Feature: Cron Job Scheduling for checking and notifying admin about the vulnerability
  
