@@ -413,6 +413,5 @@ class WP_Core_Integrity
 
         wp_mail(get_option('admin_email'), 'WordPress Core Integrity: Scan Report', $email_body,
             ['Content-Type: text/html; charset=UTF-8']);
-
     }
 }
