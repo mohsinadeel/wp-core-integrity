@@ -5,7 +5,7 @@ Tags: WordPress Core Integrity, WordPress Integrity, Malware Scan, Validate Core
 Requires at least: 4.0
 Tested up to: 4.9.8
 Requires PHP: 7.0
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 

@@ -62,7 +62,7 @@ class WP_Core_Integrity
 
         add_filter('cron_schedules', [$this, 'my_cron_schedules']);
         if (! wp_next_scheduled('verify_daily_wp_core_integrity')) {
-            wp_schedule_event(time(), 'twicedaily', 'verify_daily_wp_core_integrity');
+            wp_schedule_event(time(), 'daily', 'verify_daily_wp_core_integrity');
         }
 
         add_action('verify_daily_wp_core_integrity', [$this, 'cron_scan_job']);
