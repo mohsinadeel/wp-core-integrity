@@ -1,5 +1,5 @@
 {
-  "name": "mohsinadeel/wp-core-integrity",
+  "name": "Inceptionsol/Coreintegrity",
   "description": "A plugin to scan WordPress core directories to check the files integrity",
   "type": "project",
   "require": {

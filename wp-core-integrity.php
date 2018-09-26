@@ -9,7 +9,7 @@
  * Plugin Name: WordPress Core Integrity Checker
  * Plugin Url: https://github.com/mohsinadeel/wp-core-integrity
  * Description: A plugin to scan WordPress core directories to check the files integrity
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Mohsin Adeel
  * Author URI: http://www.inceptionsol.com/mohsin , https://github.com/mohsinadeel
  * License: GPL3
@@ -19,7 +19,7 @@
 defined('ABSPATH') or die('No script kiddies please!');
 
 
-define('WCI_VERSION', '1.0.7');
+define('WCI_VERSION', '1.0.8');
 define('WCI_MINIMUM_WP_VERSION', '4.0');
 
 require_once 'init.php';
