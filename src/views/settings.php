@@ -6,7 +6,7 @@
 
         <table class="form-table">
             <tr valign="top">
-                <th scope="row"><label for="include_wp_content">Include "wp_include" to scan</label></th>
+                <th scope="row"><label for="include_wp_content">Include "wp_content" to scan</label></th>
                 <td><input name="include_wp_content" id="include_wp_content" type="checkbox" value="1"
                            class="code" <?php echo checked(1,
                         get_option('include_wp_content'), false) ?>" />

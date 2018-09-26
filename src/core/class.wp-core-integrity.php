@@ -59,7 +59,15 @@ class WP_Core_Integrity
         $this->initiated = true;
         add_action('admin_init', [$this, 'register_plugin_settings']);
         add_action('admin_menu', [$this, 'register_plugin_menu']);
+
+        add_filter('cron_schedules', [$this, 'my_cron_schedules']);
+        if (! wp_next_scheduled('verify_daily_wp_core_integrity')) {
+            wp_schedule_event(time(), 'twicedaily', 'verify_daily_wp_core_integrity');
+        }
+
+        add_action('verify_daily_wp_core_integrity', [$this, 'cron_scan_job']);
     }
+
 
     public function register_plugin_settings()
     {
@@ -149,7 +157,7 @@ class WP_Core_Integrity
 
             echo '<p><strong>Total time taken: </strong>' . ($end_time - $start_time) . ' seconds<p>';
             echo '<h3>Selected Scan Options:</h3>';
-            echo '<p>Include "wp_include" to scan: <strong>' . (get_option('include_wp_content') ? "Yes" : "No") . '</strong></p>';
+            echo '<p>Include "wp_content" to scan: <strong>' . (get_option('include_wp_content') ? "Yes" : "No") . '</strong></p>';
             echo '<p>Search for malicious files addition in the core: <strong>' . (get_option('check_newly_added_files') ? "Yes" : "No") . '</strong></p>';
             echo '</div>';
         } else {
@@ -164,11 +172,11 @@ class WP_Core_Integrity
     public function plugin_activation()
     {
         global $wp_version;
-        if (version_compare($wp_version, WP_CORE_INTEGRITY_MINIMUM_WP_VERSION,
+        if (version_compare($wp_version, WCI_MINIMUM_WP_VERSION,
             '<')
         ) {
             $message   = 'WordPress version '
-                         . WP_CORE_INTEGRITY_MINIMUM_WP_VERSION
+                         . WCI_MINIMUM_WP_VERSION
                          . ' or above required';
             $css_class = 'error';
             add_action('admin_notices', function () use ($css_class, $message) {
@@ -177,6 +185,11 @@ class WP_Core_Integrity
                     esc_html(__($message, 'wp-core-integrity')));
             });
         }
+    }
+
+    public function plugin_deactivation()
+    {
+        wp_clear_scheduled_hook('verify_daily_wp_core_integrity');
     }
 
     public function setNotice($message, $class = 'success')
@@ -199,30 +212,39 @@ class WP_Core_Integrity
      * Check the core files via WordPress Official Release Checksum
      * excluding wp-content folder.
      *
+     * @param $checksum
+     * @param bool $throwException
+     *
+     * @return array|bool
+     * @throws \Exception
      * @global $wp_version , $wp_local_package, $wp_locale
      *
-     * @return bool
      */
-    public function check_files_changes_in_core_files($checksum)
+    public function check_files_changes_in_core_files($checksum, $throwException = false)
     {
         $errors = $this->verifyChecksums($checksum);
 
         if (count($errors) > 0) {
             foreach ($errors as $error) {
+                if ($throwException) {
+                    throw new \Exception($error);
+                }
                 $this->setNotice($error, 'warning');
             }
         }
 
-        return [count($checksum), ((count($errors) > 0) ? false : true)];
+        return [count($checksum), ((count($errors) > 0) ? false : true), $errors];
     }
 
     /**
      * Filter Checksum, from WordPress Official, for WordPress content folder inclusion
      *
+     * @param bool $include_wp_content
+     *
      * @return array
-     * @internal param array $json response from serve with checksum     *
+     * @internal param array $json response from serve with checksum
      */
-    public function getChecksums()
+    public function getChecksums($include_wp_content = false)
     {
         global $wp_version, $wp_local_package, $wp_locale;
 
@@ -230,7 +252,7 @@ class WP_Core_Integrity
         $api_url                    = 'https://api.wordpress.org/core/checksums/1.0/?version=' . $wp_version . '&locale=' . $wp_locale;
         $json                       = json_decode(file_get_contents($api_url), true);
         $checksum                   = $json['checksums'];
-        $include_wp_content_setting = get_option('include_wp_content', 0);
+        $include_wp_content_setting = ($include_wp_content) ?: get_option('include_wp_content', 0);
 
         if (empty($checksum)) {
             return [];
@@ -271,7 +293,7 @@ class WP_Core_Integrity
         return $errors;
     }
 
-    public function check_new_files_in_core($checksums)
+    public function check_new_files_in_core($checksums, $throwException = false)
     {
         $directories_to_scan = [];
         $extra_files         = [];
@@ -288,6 +310,9 @@ class WP_Core_Integrity
                         }
                         if (! in_array($file, $key_checksums)) {
                             $extra_files[] = $file;
+                            if ($throwException) {
+                                throw new \Exception($file);
+                            }
                             $this->setNotice('<strong>Error!</strong> New file added: ' . $file, 'error');
                         }
                     }
@@ -296,7 +321,7 @@ class WP_Core_Integrity
         }
         $result = count($extra_files);
 
-        return [$result, (($result > 0) ? false : true)];
+        return [$result, (($result > 0) ? false : true), $extra_files];
     }
 
     public function transverse_folders($dir, $recursive = true)
@@ -319,5 +344,75 @@ class WP_Core_Integrity
         }
 
         return $result;
+    }
+
+    public function my_cron_schedules($schedules)
+    {
+        if (! isset($schedules["1min"])) {
+            $schedules["1min"] = array(
+                'interval' => 1 * 60,
+                'display'  => __('Once every 1 minute'),
+            );
+        }
+        if (! isset($schedules["5min"])) {
+            $schedules["5min"] = array(
+                'interval' => 5 * 60,
+                'display'  => __('Once every 5 minutes'),
+            );
+        }
+        if (! isset($schedules["30min"])) {
+            $schedules["30min"] = array(
+                'interval' => 30 * 60,
+                'display'  => __('Once every 30 minutes'),
+            );
+        }
+
+        return $schedules;
+    }
+
+    public function cron_scan_job()
+    {
+        $checksum = $this->getChecksums(true);
+        if (! $checksum) {
+            return false;
+        }
+        $hasNoError                    = false;
+        $errors                        = [];
+        $count_check_new_files_in_core = null;
+        $start_time                    = time();
+        $message                       = '';
+        try {
+            list($count_check_files_changes_in_core_files, $hasNoError, $errors) = $this->check_files_changes_in_core_files($checksum);
+
+            if ($hasNoError) {
+                list($count_check_new_files_in_core, $hasNoError, $errors) = $this->check_new_files_in_core($checksum);
+
+                if ($hasNoError) {
+                    //ALL IS WELL
+                    $message = 'No Vulnerability found: WordPress integrity test passed.';
+                }
+            }
+        } catch (\Exception $exception) {
+            $errors[] = 'Vulnerability found: ' . $exception->getMessage();
+        }
+
+        $end_time   = time();
+        $email_body = '<h3>Scan Details:</h3>';
+        if (count($errors) > 0) {
+            $email_body .= '<p>Vulnerability found: </p>' . implode('<br/>', $errors);
+        }
+        if ($message) {
+            $email_body .= '<p>' . $message . '</p>';
+        }
+        $email_body .= '<p><strong>Total files scanned: </strong>' . $count_check_files_changes_in_core_files . '<p>';
+        $email_body .= '<p><strong>Total new malicious files found: </strong>' . ($count_check_new_files_in_core ?: 0) . '<p>';
+        $email_body .= '<p><strong>Total time taken: </strong>' . ($end_time - $start_time) . ' seconds<p>';
+        $email_body .= '<h3>Selected Scan Options:</h3>';
+        $email_body .= '<p>Include "wp_content" to scan: <strong>Yes</strong></p>';
+        $email_body .= '<p>Search for malicious files addition in the core: <strong>Yes</strong></p>';
+
+        wp_mail(get_option('admin_email'), 'WordPress Core Integrity: Scan Report', $email_body,
+            ['Content-Type: text/html; charset=UTF-8']);
+
     }
 }
